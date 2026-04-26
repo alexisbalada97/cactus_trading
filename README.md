@@ -1,6 +1,6 @@
-# TradeBot Config Dashboard
+# Cactus Trading Config Dashboard
 
-Interfaz web mock para configurar un bot de trading semi automático. Construida con React, TypeScript, Vite y Tailwind CSS.
+Interfaz web mock para configurar Cactus Trading, un bot de trading semi automático. Construida con React, TypeScript, Vite y Tailwind CSS.
 
 ## Ejecutar en local
 
