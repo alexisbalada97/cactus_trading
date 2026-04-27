@@ -2,7 +2,6 @@ import {
   Activity,
   AlertTriangle,
   BarChart3,
-  Bell,
   Bot,
   CalendarClock,
   Check,
@@ -38,6 +37,15 @@ import {
   Zap
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import {
+  BrowserRouter,
+  Link,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate
+} from "react-router-dom";
 import cactusTradingLogo from "./assets/cactus-trading-logo.svg";
 
 type MarketMode =
@@ -734,6 +742,529 @@ const safetyLabels: Record<SafetyKey, string> = {
 const classNames = (...classes: Array<string | false | null | undefined>) =>
   classes.filter(Boolean).join(" ");
 
+const DEMO_EMAIL = "admin@cactustrading.io";
+const DEMO_PASSWORD = "cactus-demo";
+const AUTH_STORAGE_KEY = "cactus-trading-demo-auth";
+
+const isDemoAuthenticated = () =>
+  typeof window !== "undefined" && window.localStorage.getItem(AUTH_STORAGE_KEY) === "true";
+
+const landingMetrics = [
+  { label: "Strategy modules", value: "24+", detail: "multi-market ready" },
+  { label: "Target uptime", value: "99.95%", detail: "monitoring-first stack" },
+  { label: "Decision latency", value: "<45ms", detail: "simulated execution loop" },
+  { label: "Risk checks", value: "18", detail: "before every order" }
+];
+
+const buildPillars = [
+  {
+    title: "Proprietary Trading",
+    description: "Multi-strategy automated trading, risk-managed execution and a portfolio of algos.",
+    icon: TrendingUp
+  },
+  {
+    title: "Trading Infrastructure SaaS",
+    description: "Bot orchestration, backtesting, execution engines and monitoring for serious operators.",
+    icon: Cpu
+  },
+  {
+    title: "Quant Technology / B2B",
+    description: "White-label infrastructure, risk systems and OMS/EMS workflows for trading teams.",
+    icon: Network
+  },
+  {
+    title: "Signals & AI Research",
+    description: "Alpha models, signals APIs and AI-assisted trading intelligence for systematic research.",
+    icon: Sparkles
+  }
+];
+
+const architectureLayers = [
+  "Strategies",
+  "Risk Engine",
+  "Execution Layer",
+  "Exchange Connectivity",
+  "Monitoring & Control"
+];
+
+const platformConcepts = [
+  "Event-driven architecture",
+  "Multi-agent personalities",
+  "Risk-first execution",
+  "Exchange reconciliation",
+  "Modular infrastructure"
+];
+
+const roadmap = [
+  {
+    phase: "Phase 1",
+    title: "Core Trading Framework",
+    items: ["Proprietary bots", "Core framework", "Risk control cockpit"]
+  },
+  {
+    phase: "Phase 2",
+    title: "Infrastructure Platform",
+    items: ["SaaS platform", "APIs", "White-label deployments"]
+  },
+  {
+    phase: "Phase 3",
+    title: "Quant Ecosystem",
+    items: ["Marketplace", "Prop infrastructure", "Quant fund foundation"]
+  }
+];
+
+const useCases = ["Traders", "Prop Firms", "Funds", "Brokers", "Developers"];
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedDashboard>
+              <Dashboard />
+            </ProtectedDashboard>
+          }
+        />
+        <Route path="*" element={<Navigate replace to="/" />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+function ProtectedDashboard({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+
+  if (!isDemoAuthenticated()) {
+    return <Navigate replace state={{ from: location.pathname }} to="/login" />;
+  }
+
+  return children;
+}
+
+function LandingPage() {
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  return (
+    <main className="landing-shell min-h-screen overflow-hidden text-slate-100">
+      <LandingBackground />
+      <header className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
+        <Link className="flex items-center gap-3" to="/">
+          <img alt="Cactus Trading" className="h-10 w-10 rounded-xl" src={cactusTradingLogo} />
+          <span className="leading-tight">
+            <span className="block text-sm font-bold uppercase tracking-[0.28em] text-slate-100">
+              Cactus
+            </span>
+            <span className="block text-xs font-semibold uppercase tracking-[0.32em] text-emerald-300">
+              Trading
+            </span>
+          </span>
+        </Link>
+        <nav className="hidden items-center gap-7 text-sm text-slate-300 md:flex">
+          <button className="transition hover:text-white" onClick={() => scrollToSection("platform")}>
+            Platform
+          </button>
+          <button className="transition hover:text-white" onClick={() => scrollToSection("ecosystem")}>
+            Ecosystem
+          </button>
+          <button className="transition hover:text-white" onClick={() => scrollToSection("roadmap")}>
+            Roadmap
+          </button>
+        </nav>
+        <Link
+          className="inline-flex h-10 items-center gap-2 rounded-lg border border-emerald-300/40 bg-emerald-400/10 px-4 text-sm font-semibold text-emerald-100 transition hover:border-emerald-200 hover:bg-emerald-300/15"
+          to="/login"
+        >
+          Login
+          <LockKeyhole className="h-4 w-4" />
+        </Link>
+      </header>
+
+      <section className="relative z-10 mx-auto grid min-h-[calc(100vh-80px)] w-full max-w-7xl items-center gap-12 px-4 pb-16 pt-8 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:px-8">
+        <div>
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/8 px-3 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-100">
+            <Radio className="h-4 w-4 text-emerald-300" />
+            Quantitative infrastructure startup
+          </div>
+          <h1 className="max-w-4xl text-5xl font-black leading-[0.96] text-white sm:text-6xl lg:text-7xl">
+            Building Algorithmic Trading Infrastructure
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+            Multi-strategy bots, risk engines, execution systems and quantitative infrastructure
+            for systematic trading teams.
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <button
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-emerald-300 px-5 text-sm font-bold text-slate-950 transition hover:bg-emerald-200"
+              onClick={() => scrollToSection("platform")}
+            >
+              Explore Platform
+              <ChevronDown className="h-4 w-4" />
+            </button>
+            <Link
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-slate-600 bg-slate-950/50 px-5 text-sm font-bold text-slate-100 transition hover:border-cyan-300/60"
+              to="/login"
+            >
+              View Dashboard
+              <LayoutDashboard className="h-4 w-4" />
+            </Link>
+            <button
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-transparent px-5 text-sm font-bold text-cyan-100 transition hover:bg-cyan-300/10"
+              onClick={() => scrollToSection("vision")}
+            >
+              Join the Vision
+              <Sparkles className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {landingMetrics.map((metric) => (
+              <div className="metric-tile rounded-lg border border-slate-700/70 bg-slate-950/45 p-4" key={metric.label}>
+                <p className="metric-value text-2xl font-black text-white">{metric.value}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  {metric.label}
+                </p>
+                <p className="mt-1 text-xs text-slate-500">{metric.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <DashboardHeroMockup />
+      </section>
+
+      <LandingSection id="build" eyebrow="What We Build" title="A complete operating layer for systematic trading.">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {buildPillars.map(({ icon: Icon, title, description }) => (
+            <article className="landing-card group min-h-64 rounded-xl p-5 transition hover:-translate-y-1" key={title}>
+              <div className="mb-8 flex h-12 w-12 items-center justify-center rounded-lg border border-emerald-300/25 bg-emerald-300/10 text-emerald-200">
+                <Icon className="h-6 w-6" />
+              </div>
+              <h3 className="text-xl font-bold text-white">{title}</h3>
+              <p className="mt-4 text-sm leading-6 text-slate-300">{description}</p>
+            </article>
+          ))}
+        </div>
+      </LandingSection>
+
+      <LandingSection id="ecosystem" eyebrow="Business Lines" title="Three brands, one quant infrastructure ecosystem.">
+        <div className="grid gap-4 lg:grid-cols-3">
+          {[
+            ["Cactus Trading", "Prop Trading", "Internal multi-strategy systems and controlled capital deployment."],
+            ["Cactus Labs", "Infrastructure SaaS", "Trading infrastructure, white-label systems and developer APIs."],
+            ["Cactus Alpha", "Signals & Research", "Alpha models, research workflows and intelligence layers."]
+          ].map(([brand, label, copy]) => (
+            <article className="ecosystem-node rounded-xl border border-slate-700/70 bg-slate-950/55 p-6" key={brand}>
+              <p className="text-xs font-bold uppercase tracking-[0.3em] text-emerald-300">{label}</p>
+              <h3 className="mt-4 text-3xl font-black text-white">{brand}</h3>
+              <p className="mt-4 text-sm leading-6 text-slate-300">{copy}</p>
+            </article>
+          ))}
+        </div>
+      </LandingSection>
+
+      <LandingSection id="platform" eyebrow="Platform Architecture" title="Designed like infrastructure, not a single bot.">
+        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="landing-card rounded-xl p-6">
+            <div className="grid gap-3">
+              {architectureLayers.map((layer, index) => (
+                <div key={layer}>
+                  <div className="flex items-center justify-between rounded-lg border border-slate-700/70 bg-slate-950/55 px-4 py-4">
+                    <span className="font-bold text-white">{layer}</span>
+                    <span className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">
+                      Layer {index + 1}
+                    </span>
+                  </div>
+                  {index < architectureLayers.length - 1 && (
+                    <div className="mx-auto h-6 w-px bg-gradient-to-b from-emerald-300 to-cyan-300" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="grid content-start gap-3">
+            {platformConcepts.map((concept) => (
+              <div className="rounded-lg border border-cyan-300/20 bg-cyan-300/8 px-4 py-4 text-sm font-semibold text-cyan-50" key={concept}>
+                {concept}
+              </div>
+            ))}
+          </div>
+        </div>
+      </LandingSection>
+
+      <LandingSection eyebrow="Difference" title="No, this is not another retail trading bot.">
+        <div className="overflow-hidden rounded-xl border border-slate-700/70 bg-slate-950/55">
+          {[
+            ["System design", "Single strategy scripts", "Modular event-driven framework"],
+            ["Risk", "Optional stop-loss settings", "Risk-first execution policy"],
+            ["Operations", "Manual monitoring", "Control plane, checks and reconciliation"],
+            ["Audience", "Retail automation", "Infrastructure for trading operators"]
+          ].map(([area, retail, institutional]) => (
+            <div className="grid gap-0 border-b border-slate-800 last:border-b-0 md:grid-cols-[0.8fr_1fr_1fr]" key={area}>
+              <div className="bg-slate-900/70 p-4 text-sm font-bold uppercase tracking-wide text-slate-400">
+                {area}
+              </div>
+              <div className="border-t border-slate-800 p-4 text-sm text-rose-200 md:border-l md:border-t-0">
+                <X className="mb-2 h-4 w-4" />
+                {retail}
+              </div>
+              <div className="border-t border-slate-800 p-4 text-sm text-emerald-100 md:border-l md:border-t-0">
+                <Check className="mb-2 h-4 w-4" />
+                {institutional}
+              </div>
+            </div>
+          ))}
+        </div>
+      </LandingSection>
+
+      <LandingSection id="roadmap" eyebrow="Roadmap" title="From proprietary control plane to quant ecosystem.">
+        <div className="grid gap-4 lg:grid-cols-3">
+          {roadmap.map((step) => (
+            <article className="landing-card rounded-xl p-6" key={step.phase}>
+              <p className="text-sm font-bold uppercase tracking-[0.28em] text-cyan-200">{step.phase}</p>
+              <h3 className="mt-4 text-2xl font-black text-white">{step.title}</h3>
+              <ul className="mt-5 space-y-3 text-sm text-slate-300">
+                {step.items.map((item) => (
+                  <li className="flex items-center gap-3" key={item}>
+                    <Check className="h-4 w-4 text-emerald-300" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </LandingSection>
+
+      <LandingSection eyebrow="Use Cases" title="Built for teams that need control, not hype.">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {useCases.map((useCase) => (
+            <div className="rounded-xl border border-slate-700/70 bg-slate-950/55 p-5 text-center" key={useCase}>
+              <ShieldCheck className="mx-auto h-6 w-6 text-emerald-300" />
+              <p className="mt-4 font-bold text-white">For {useCase}</p>
+            </div>
+          ))}
+        </div>
+      </LandingSection>
+
+      <LandingSection eyebrow="Dashboard Preview" title="A real control panel, shaped into a product surface.">
+        <DashboardPreview />
+      </LandingSection>
+
+      <section id="vision" className="relative z-10 mx-auto w-full max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+        <div className="rounded-2xl border border-emerald-300/25 bg-emerald-300/8 p-8 text-center shadow-glow sm:p-14">
+          <p className="text-sm font-bold uppercase tracking-[0.34em] text-emerald-200">Vision</p>
+          <h2 className="mx-auto mt-6 max-w-5xl text-4xl font-black leading-tight text-white sm:text-6xl">
+            We are not building trading bots. We are building quantitative infrastructure.
+          </h2>
+        </div>
+      </section>
+
+      <footer className="relative z-10 border-t border-slate-800 bg-slate-950/70">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-10 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+          <div className="flex items-center gap-3">
+            <img alt="Cactus Trading" className="h-9 w-9 rounded-lg" src={cactusTradingLogo} />
+            <span className="font-bold text-white">Cactus Trading</span>
+          </div>
+          <div className="flex flex-wrap gap-5 text-sm text-slate-400">
+            {["Platform", "Research", "Infrastructure", "Documentation", "GitHub"].map((link) => (
+              <a className="transition hover:text-white" href="#" key={link}>
+                {link}
+              </a>
+            ))}
+          </div>
+        </div>
+      </footer>
+    </main>
+  );
+}
+
+function LandingBackground() {
+  return (
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-0">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_8%,rgba(16,185,129,0.18),transparent_28%),radial-gradient(circle_at_78%_2%,rgba(34,211,238,0.14),transparent_24%),linear-gradient(145deg,#020617_0%,#07111f_45%,#020617_100%)]" />
+      <div className="market-grid absolute inset-0 opacity-35" />
+      <div className="absolute left-1/2 top-0 h-px w-[70vw] -translate-x-1/2 bg-gradient-to-r from-transparent via-emerald-300/50 to-transparent" />
+    </div>
+  );
+}
+
+function LandingSection({
+  children,
+  eyebrow,
+  id,
+  title
+}: {
+  children: React.ReactNode;
+  eyebrow: string;
+  id?: string;
+  title: string;
+}) {
+  return (
+    <section className="relative z-10 mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8" id={id}>
+      <div className="mb-9 max-w-3xl">
+        <p className="text-sm font-bold uppercase tracking-[0.3em] text-emerald-300">{eyebrow}</p>
+        <h2 className="mt-4 text-3xl font-black leading-tight text-white sm:text-5xl">{title}</h2>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function DashboardHeroMockup() {
+  return (
+    <div className="landing-card relative rounded-2xl p-4 shadow-[0_28px_120px_rgba(8,47,73,0.4)]">
+      <div className="mb-4 flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-300 text-slate-950">
+            <Bot className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="font-bold text-white">Execution Control Plane</p>
+            <p className="text-xs text-slate-400">Live demo environment</p>
+          </div>
+        </div>
+        <span className="rounded-full border border-emerald-300/40 bg-emerald-300/10 px-3 py-1 text-xs font-bold text-emerald-200">
+          Active
+        </span>
+      </div>
+      <div className="grid gap-3 md:grid-cols-3">
+        {["Blue Momentum", "Pink Breakout", "Green Swing"].map((bot, index) => (
+          <div className="rounded-xl border border-slate-700/70 bg-slate-950/60 p-4" key={bot}>
+            <p className="text-sm font-bold text-white">{bot}</p>
+            <p className="mt-1 text-xs text-slate-500">Risk policy {index + 1}</p>
+            <div className="mt-4 h-2 rounded-full bg-slate-800">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-emerald-300 to-cyan-300"
+                style={{ width: `${62 + index * 11}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-4 grid gap-3 md:grid-cols-[1fr_0.7fr]">
+        <div className="rounded-xl border border-slate-700/70 bg-slate-950/60 p-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-bold text-white">Risk Engine</p>
+            <ShieldCheck className="h-5 w-5 text-emerald-300" />
+          </div>
+          <div className="mt-4 grid gap-2">
+            {["Daily loss guard", "Order throttle", "Spread filter"].map((item) => (
+              <div className="flex items-center justify-between text-xs text-slate-300" key={item}>
+                <span>{item}</span>
+                <Check className="h-4 w-4 text-emerald-300" />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-xl border border-cyan-300/25 bg-cyan-300/8 p-4">
+          <p className="text-sm font-bold text-white">Market Pulse</p>
+          <p className="mt-3 text-3xl font-black text-cyan-100">+4.8%</p>
+          <p className="mt-1 text-xs text-slate-400">rolling strategy PnL</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DashboardPreview() {
+  return (
+    <div className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
+      <div className="grid gap-4">
+        {[
+          ["Bot control", "Start, pause and inspect strategy agents."],
+          ["Metrics", "PnL, trades, status and operating windows."],
+          ["Risk panel", "Loss limits, volatility guards and session rules."],
+          ["Strategy modules", "Composable logic with editable source previews."]
+        ].map(([title, copy]) => (
+          <div className="rounded-xl border border-slate-700/70 bg-slate-950/55 p-5" key={title}>
+            <p className="font-bold text-white">{title}</p>
+            <p className="mt-2 text-sm leading-6 text-slate-400">{copy}</p>
+          </div>
+        ))}
+      </div>
+      <DashboardHeroMockup />
+    </div>
+  );
+}
+
+function LoginPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [email, setEmail] = useState(DEMO_EMAIL);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const from = (location.state as { from?: string } | null)?.from ?? "/dashboard";
+
+  if (isDemoAuthenticated()) {
+    return <Navigate replace to="/dashboard" />;
+  }
+
+  const submitLogin = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (email.trim().toLowerCase() === DEMO_EMAIL && password === DEMO_PASSWORD) {
+      window.localStorage.setItem(AUTH_STORAGE_KEY, "true");
+      navigate(from, { replace: true });
+      return;
+    }
+    setError("Invalid demo credentials. Use admin@cactustrading.io / cactus-demo.");
+  };
+
+  return (
+    <main className="landing-shell relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10 text-slate-100">
+      <LandingBackground />
+      <Link className="absolute left-4 top-5 z-10 flex items-center gap-3 sm:left-6 lg:left-8" to="/">
+        <img alt="Cactus Trading" className="h-10 w-10 rounded-xl" src={cactusTradingLogo} />
+        <span className="text-sm font-bold uppercase tracking-[0.28em] text-white">Cactus Trading</span>
+      </Link>
+      <form className="landing-card relative z-10 w-full max-w-md rounded-2xl p-6 shadow-glow" onSubmit={submitLogin}>
+        <div className="mb-8">
+          <p className="text-sm font-bold uppercase tracking-[0.3em] text-emerald-300">Secure Access</p>
+          <h1 className="mt-4 text-3xl font-black text-white">Open the control plane.</h1>
+          <p className="mt-3 text-sm leading-6 text-slate-400">
+            Demo-local login for the Cactus Trading dashboard. No backend auth is connected yet.
+          </p>
+        </div>
+        <div className="space-y-4">
+          <Field label="Email">
+            <input
+              className="field w-full"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+          </Field>
+          <Field label="Password">
+            <input
+              className="field w-full"
+              placeholder="cactus-demo"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+          </Field>
+        </div>
+        {error && (
+          <div className="mt-4 rounded-lg border border-rose-400/35 bg-rose-500/10 px-3 py-3 text-sm text-rose-100">
+            {error}
+          </div>
+        )}
+        <button className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-emerald-300 text-sm font-black text-slate-950 transition hover:bg-emerald-200">
+          Access Dashboard
+          <LockKeyhole className="h-4 w-4" />
+        </button>
+        <p className="mt-4 text-center text-xs text-slate-500">
+          Demo credentials: {DEMO_EMAIL} / {DEMO_PASSWORD}
+        </p>
+      </form>
+    </main>
+  );
+}
+
 const slugify = (value: string) =>
   value
     .trim()
@@ -804,7 +1335,7 @@ const generateIndicatorSource = (
 }`;
 };
 
-function App() {
+function Dashboard() {
   const [botStatus, setBotStatus] = useState<"Detenido" | "Activo">("Detenido");
   const [toast, setToast] = useState("");
   const [activePage, setActivePage] = useState<Page>("Configuración");
