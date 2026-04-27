@@ -36,7 +36,7 @@ import {
   X,
   Zap
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   BrowserRouter,
   Link,
@@ -936,6 +936,39 @@ function LandingPage() {
         <DashboardHeroMockup />
       </section>
 
+      <LandingSection
+        eyebrow="Live Market Context"
+        id="markets"
+        title="Real-time market intelligence for systematic operators."
+      >
+        <div className="grid gap-5 lg:grid-cols-[0.82fr_1.18fr]">
+          <div className="landing-card rounded-xl p-6">
+            <p className="text-sm font-bold uppercase tracking-[0.28em] text-cyan-200">
+              TradingView Feed
+            </p>
+            <h3 className="mt-4 text-3xl font-black text-white">
+              Macro, crypto and volatility signals in one surface.
+            </h3>
+            <p className="mt-4 text-sm leading-6 text-slate-300">
+              A quant infrastructure homepage should feel connected to live markets. This module
+              frames the platform around the assets, volatility and liquidity regimes that trading
+              systems actually react to.
+            </p>
+            <div className="mt-6 grid grid-cols-2 gap-3 text-sm">
+              {["BTC", "ETH", "NASDAQ", "S&P 500", "DXY", "VIX"].map((symbol) => (
+                <div
+                  className="rounded-lg border border-slate-700/70 bg-slate-950/45 px-3 py-3 font-semibold text-slate-200"
+                  key={symbol}
+                >
+                  {symbol}
+                </div>
+              ))}
+            </div>
+          </div>
+          <TradingViewMarketWidget />
+        </div>
+      </LandingSection>
+
       <LandingSection id="build" eyebrow="What We Build" title="A complete operating layer for systematic trading.">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {buildPillars.map(({ icon: Icon, title, description }) => (
@@ -1111,6 +1144,73 @@ function LandingSection({
       </div>
       {children}
     </section>
+  );
+}
+
+function TradingViewMarketWidget() {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const container = containerRef.current;
+    container.innerHTML = "";
+
+    const widgetContainer = document.createElement("div");
+    widgetContainer.className = "tradingview-widget-container__widget h-full min-h-[520px]";
+
+    const script = document.createElement("script");
+    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js";
+    script.type = "text/javascript";
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+      autosize: true,
+      chartType: "area",
+      colorTheme: "dark",
+      dateRanges: ["1d|1", "1m|30", "3m|60", "12m|1D"],
+      downColor: "#ef4444",
+      gridLineColor: "rgba(148, 163, 184, 0.12)",
+      isTransparent: true,
+      largeChartUrl: "",
+      lineWidth: 2,
+      locale: "en",
+      noTimeScale: false,
+      scalePosition: "right",
+      symbols: [
+        ["Bitcoin", "BINANCE:BTCUSDT|1D"],
+        ["Ethereum", "BINANCE:ETHUSDT|1D"],
+        ["Nasdaq 100", "NASDAQ:NDX|1D"],
+        ["S&P 500", "SP:SPX|1D"],
+        ["US Dollar Index", "TVC:DXY|1D"],
+        ["Volatility", "TVC:VIX|1D"]
+      ],
+      upColor: "#34d399",
+      width: "100%"
+    });
+
+    container.append(widgetContainer, script);
+
+    return () => {
+      container.innerHTML = "";
+    };
+  }, []);
+
+  return (
+    <div className="landing-card tradingview-shell min-h-[560px] overflow-hidden rounded-xl p-3">
+      <div className="mb-3 flex items-center justify-between px-2 pt-1">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.26em] text-emerald-300">
+            Live Markets
+          </p>
+          <p className="mt-1 text-sm text-slate-400">Powered by TradingView</p>
+        </div>
+        <div className="flex items-center gap-2 rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-xs font-bold text-emerald-200">
+          <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_14px_rgba(52,211,153,0.8)]" />
+          Live
+        </div>
+      </div>
+      <div ref={containerRef} className="h-[520px] w-full" />
+    </div>
   );
 }
 
